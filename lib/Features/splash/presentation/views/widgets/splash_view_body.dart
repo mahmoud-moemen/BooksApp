@@ -1,9 +1,36 @@
+import 'package:books_app/Features/home/presentation/views/home_view.dart';
+import 'package:books_app/Features/splash/presentation/views/widgets/sliding_text.dart';
+import 'package:books_app/constants.dart';
 import 'package:books_app/core/utils/assets.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class SplashViewBody extends StatelessWidget {
+class SplashViewBody extends StatefulWidget {
   const SplashViewBody({Key? key}) : super(key: key);
 
+  @override
+  State<SplashViewBody> createState() => _SplashViewBodyState();
+}
+
+class _SplashViewBodyState extends State<SplashViewBody> with SingleTickerProviderStateMixin {
+
+  late AnimationController animationController;
+  late Animation<Offset> slidingAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    initSlidingAnimation();
+
+    navigateToHome();
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    animationController.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return  Column(
@@ -12,7 +39,24 @@ class SplashViewBody extends StatelessWidget {
       children:
       [
         Image.asset(AssetsData.logo),
+        const SizedBox(height: 4),
+        SlidingText(slidingAnimation: slidingAnimation),
       ],
     );
   }
+
+  void initSlidingAnimation() {
+    animationController = AnimationController(vsync: this,duration: const Duration(seconds: 1));
+    slidingAnimation = Tween<Offset>(begin:const Offset(0, 30) ,end:Offset.zero ).animate(animationController);
+
+    animationController.forward();}
+
+
+  void navigateToHome() {
+    Future.delayed(const Duration(seconds: 3),() {
+      Get.to(const HomeView(),transition: Transition.fade,duration: kTransitionDuration);
+    },);
+  }
 }
+
+
